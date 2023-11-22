@@ -1,0 +1,12 @@
+h1 {
+    background-color: transparent;
+    font-size: 400;
+    color: red;
+    font-style: normal;
+    position: relative;
+}
+
+.hbar1 {
+    display: inline;
+    margin: 15px;
+}

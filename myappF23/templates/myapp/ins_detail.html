@@ -1,0 +1,25 @@
+{% extends "myapp/base.html" %}
+
+{% block content%}
+
+<h2>{{instructor_name}}</h2>
+
+{% if course_list %}
+
+{% for course in course_list %}
+<h4>{{course.name}}</h4>
+
+{%if course.students|length > 0%}
+<ol>
+    {% for st in course.students %}
+    <li>{{st}}</li>
+    {% endfor %}
+</ol>
+{%else%}
+<strong>No students are currently enrolled in this course!</strong>
+{% endif %}
+{% endfor %}
+
+{%endif%}
+
+{% endblock %}

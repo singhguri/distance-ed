@@ -1,0 +1,63 @@
+{% extends "myapp/base.html" %}
+
+{% block content%}
+{% if category_list %}
+<h2>List of Categories</h2>
+<ol>
+    {% for category in category_list %}
+    <li>
+        <a href="{% url 'category_detail' category.id %}" target="_blank">{{category.name}}</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no categories</strong>
+{% endif %}
+
+{% if course_list %}
+<h2>List of Courses</h2>
+<ol>
+    {% for course in course_list %}
+    <li>{{course.title}}</li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no courses</strong>
+{% endif %}
+
+{% if order_list %}
+<h2>List of Orders</h2>
+<ol>
+    {% for order in order_list %}
+    <li>
+        {{order.student}} : {{order.course}} -
+        {% if order.order_status == 0 %}
+        {{"Order Confirmed"}}
+        {%else%}
+        {{"Order Cancelled"}}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no orders</strong>
+{% endif %}
+
+{% if ins_list %}
+<h2>List of Instructors</h2>
+<ol>
+    {% for ins in ins_list %}
+    <li>
+        <a href="{% url 'ins_detail' ins.id%}">{{ins}}</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no orders</strong>
+{% endif %}
+
+<p>
+    <a href="{% url 'about' %}">About</a>
+</p>
+
+{% endblock %}

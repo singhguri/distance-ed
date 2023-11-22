@@ -1,0 +1,19 @@
+# .gitignore
+
+# Ignore the env directory
+/venv/
+Pipfile
+Pipfile.*
+
+# Other commonly ignored file patterns
+*.log
+*.cache
+*.pyc
+*.swp
+__pycache__/
+*.egg-info/
+*.egg
+.idea/
+db.sqlite3
+
+# Add other patterns as required...

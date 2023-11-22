@@ -1,0 +1,18 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<h2>My Account</h2>
+<p>Full Name: {{ full_name }}</p>
+<p>Courses Ordered:</p>
+<ul>
+    {% for course in courses_ordered %}
+    <li>{{ course.name }}</li>
+    {% endfor %}
+</ul>
+<p>Courses Interested:</p>
+<ul>
+    {% for course in courses_interested %}
+    <li>{{ course.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

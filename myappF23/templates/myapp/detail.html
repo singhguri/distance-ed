@@ -1,0 +1,36 @@
+{% extends "myapp/base.html" %}
+
+{% block title %} Detail {% endblock %}
+
+{% block body_block%}
+<h1>Here you can view details on the basis of Instructors and Categories</h1>
+
+<br />
+
+{% if category_list %}
+<h2>List of Categories</h2>
+<ol>
+    {% for category in category_list %}
+    <li>
+        <a href="{% url 'category_detail' category.id %}" target="_blank">{{category.name}}</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no categories</strong>
+{% endif %}
+
+{% if ins_list %}
+<h2>List of Instructors</h2>
+<ol>
+    {% for ins in ins_list %}
+    <li>
+        <a href="{% url 'ins_detail' ins.id%}">{{ins}}</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no Instructors</strong>
+{% endif %}
+
+{% endblock %}

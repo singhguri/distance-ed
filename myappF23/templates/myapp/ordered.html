@@ -1,0 +1,21 @@
+{% extends "myapp/base.html" %}
+
+{% block title %} Course Ordered {% endblock %}
+
+{% block content%}
+
+{% if order_list %}
+<h2>List of Orders</h2>
+<ol>
+    {% for order in order_list %}
+    <li>
+        {{order.course}}
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<strong>There are no orders</strong>
+{% endif %}
+
+
+{% endblock %}
