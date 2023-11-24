@@ -5,7 +5,13 @@
 {% block content %}
 
 <form method="post" class="w-50" action="{% url 'user_login' %}">
+
     {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
 
     {{form.as_p}}
 

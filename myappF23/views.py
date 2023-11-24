@@ -8,12 +8,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from datetime import datetime
 
 
 from .models import Student, Course, Category, Instructor, Order
-from .forms import OrderForm, InterestForm, LoginForm
+from .forms import OrderForm, InterestForm, LoginForm, RegistrationForm
 
 # Create your views here.
 
@@ -199,12 +199,11 @@ def course_detail(request, course_id):
                 course.interested += 1
                 course.save()
 
-                comment = form.cleaned_data["comments"]
+                request.user.interested_courses.add(course)
 
                 # Redirect to the main index page
-                # return redirect("index")
-                url = "list/?data=" + comment
-                return redirect(url)
+                return redirect("index")
+
     else:
         form = InterestForm()
 
@@ -227,34 +226,68 @@ def list(request):
     return render(request, "myapp/list.html", {"course": c, "ins": ins})
 
 
+def register(request):
+    context = {"form": "", "errors": ""}
+    if request.method == "POST":
+        form = RegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = Student.objects.create_user(
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password"],
+                name=form.cleaned_data["name"],
+            )
+
+            print(user.email, user.password)
+            # user.save()
+
+            added_user = Student.objects.get(email=user.email)
+
+            if check_password(form.cleaned_data["password"], added_user.password):
+                login(request, user)
+
+                # Generate the date and time of the current login
+                current_login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                # Store this value as a session parameter (last_login_info)
+                request.session["last_login_info"] = current_login_time
+
+                # # Set the session expiry to 5 minutes
+                # request.session.set_expiry(300)
+
+                # Redirect to the home page after registration
+                return redirect("index")
+
+        context["errors"] = form.errors
+        context["form"] = form
+    else:
+        form = RegistrationForm()
+        context["form"] = form
+    return render(request, "myapp/register.html", context)
+
+
 def user_login(request):
     if request.method == "POST":
-        form = LoginForm(request, data=request.POST)
+        form = LoginForm(request, request.POST)
+
         if form.is_valid():
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = authenticate(request, username=username, password=password)
+            user = Student.objects.get(email=form.cleaned_data["username"])
 
-            if user:
-                if user.is_active:
-                    login(request, user)
+            if check_password(form.data["password"], user.password):
+                # Use the login() function to log in the user
+                login(request, user)
 
-                    # Generate the date and time of the current login
-                    current_login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                # Generate the date and time of the current login
+                current_login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    # Store this value as a session parameter (last_login_info)
-                    request.session["last_login_info"] = current_login_time
+                # Store this value as a session parameter (last_login_info)
+                request.session["last_login_info"] = current_login_time
 
-                    # # Set the session expiry to 5 minutes
-                    # request.session.set_expiry(300)
+                # # Set the session expiry to 5 minutes
+                # request.session.set_expiry(300)
 
-                    return HttpResponseRedirect(reverse("index"))
-                else:
-                    return HttpResponse("Your account is disabled.")
-            else:
-                return HttpResponse("Invalid login details.")
-        else:
-            form = LoginForm()
+                # Redirect to a success page or the home page
+                return redirect("index")
+
     else:
         form = LoginForm()
 
@@ -278,17 +311,19 @@ def user_logout(request):
 @login_required(login_url="/myappF23/login/")
 def myaccount(request):
     user = request.user
-    if hasattr(user, "student"):
-        # User is a student
-        student = user.student
-        courses_ordered = student.courses_ordered.all()
-        courses_interested = student.courses_interested.all()
+    if user.is_student:
+        courses_ordered = Order.objects.filter(student=user).order_by("-order_date")
+        courses_interested = user.interested_courses.all()
+        # Course.objects.filter(students=user)
+
+        print(courses_ordered, courses_interested)
+
         context = {
             "full_name": user.get_full_name(),
             "courses_ordered": courses_ordered,
             "courses_interested": courses_interested,
         }
-        return render(request, "myappF23/myaccount.html", context)
+        return render(request, "myapp/myaccount.html", context)
     else:
         # User is not a student
         return HttpResponse("You are not a registered student!")

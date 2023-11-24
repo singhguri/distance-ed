@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Order, Instructor
+from .models import Order, Instructor, Student
 
 
 class InterestForm(forms.Form):
@@ -31,7 +31,7 @@ class OrderForm(forms.ModelForm):
 
 class LoginForm(AuthenticationForm):
     class Meta:
-        model = None  # No model is associated with this form
+        model = Student
         fields = ["username", "password"]
 
     def __init__(self, *args, **kwargs):
@@ -44,25 +44,38 @@ class LoginForm(AuthenticationForm):
         )
 
 
-# class CustomAuthenticationForm(AuthenticationForm):
-#     class Meta:
-#         model = User
+class UserCreationForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = [
+            "email",
+            "password",
+        ]
 
-#     username = forms.CharField(
-#         label="USERNAME",
-#         widget=forms.TextInput(attrs={"class": "form-control"}),
-#         label_suffix="",
-#     )
-#     password = forms.CharField(
-#         label="PASSWORD",
-#         widget=forms.PasswordInput(attrs={"class": "form-control"}),
-#         label_suffix="",
-#     )
 
-#     error_messages = {
-#         "invalid_login": (
-#             "Please enter a correct username and password. Note that both "
-#             "fields may be case-sensitive."
-#         ),
-#         "inactive": ("This account is inactive."),
-#     }
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = Student
+        fields = ["name", "email", "password"]
+        # "is_superuser"
+
+    name = forms.CharField(
+        label="NAME",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        label_suffix="",
+    )
+
+    password = forms.CharField(
+        label="PASSWORD",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+        label_suffix="",
+    )
+
+    email = forms.EmailField(
+        label="EMAIL",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        label_suffix="",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)

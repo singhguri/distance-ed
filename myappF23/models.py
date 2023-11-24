@@ -1,23 +1,49 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from .managers import AuthUserManager
 
 
 # Create your models here.
-class Student(models.Model):
+class Student(AbstractBaseUser, PermissionsMixin):
     STUDENT_STATUS_CHOICES = [
         ("ER", "Enrolled"),
         ("SP", "Suspended"),
         ("GD", "Graduated"),
     ]
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=254, unique=True, default=None)
-    date_of_birth = models.DateField()
+
     status = models.CharField(
         max_length=10, choices=STUDENT_STATUS_CHOICES, default="ER"
     )
 
-    def __str__(self):
-        return self.first_name + " " + self.last_name
+    name = models.CharField(max_length=255, blank=True, default="")
+    email = models.EmailField(default="", unique=True, blank=True, max_length=255)
+    password = models.CharField(max_length=100)
+
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+
+    is_student = models.BooleanField(default=False)
+
+    interested_courses = models.ManyToManyField(
+        "Course", related_name="interested_students"
+    )
+
+    objects = AuthUserManager()
+
+    USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUERIES_FIELD = []
+
+    class Meta:
+        verbose_name = "Student"
+        verbose_name_plural = "Students"
+
+    def get_full_name(self):
+        return self.name
+
+    def get_short_name(self):
+        return self.name or self.email.split("@")[0]
 
 
 class Category(models.Model):

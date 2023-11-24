@@ -4,7 +4,7 @@
 
 <h2>Welcome to the Index Page</h2>
 <p>{{login_info}}</p>
-<p>Number of visits: {{ user_visits }}</p>
+<h2>Number of visits: {{ user_visits }}</h2>
 
 {% if category_list %}
 <h2>List of Categories</h2>
@@ -24,7 +24,7 @@
 <ol>
     {% for course in course_list %}
     <li>
-        <a href="{% url 'course-detail' course.id %}">
+        <a href="{% url 'course-detail' course.id %}" target="_blank">
             {{course.title}}
         </a>
     </li>
@@ -57,7 +57,7 @@
 <ol>
     {% for ins in ins_list %}
     <li>
-        <a href="{% url 'ins_detail' ins.id%}">{{ins}}</a>
+        <a href="{% url 'ins_detail' ins.id%}" target="_blank">{{ins}}</a>
     </li>
     {% endfor %}
 </ol>

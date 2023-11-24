@@ -12,6 +12,12 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'myapp/styles.css' %}" />
+
+    <!-- Custom CSS -->
+    {% load static %}
+    {% block customCSS %}
+    {% endblock %}
+
 </head>
 
 <body>
